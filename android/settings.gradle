@@ -1,0 +1,5 @@
+rootProject.name = 'HyperTrackOnboarding'
+include ':react-native-hypertrack'
+project(':react-native-hypertrack').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-hypertrack/android')
+
+include ':app'
