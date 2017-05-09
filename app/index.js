@@ -36,6 +36,7 @@ export default class HyperTrackOnboarding extends Component {
   onLoginSuccess(userObject) {
     console.log('Successful login: ', userObject)
 
+    // Start tracking on HyperTrack
     RNHyperTrack.startTracking((success) => {
       this.setState({showLogin: false})
     }, (error) => {
@@ -49,6 +50,7 @@ export default class HyperTrackOnboarding extends Component {
   }
 
   logOut() {
+    // Stop tracking on HyperTrack
     RNHyperTrack.stopTracking();
     this.setState({showLogin: true});
   }
@@ -64,8 +66,8 @@ export default class HyperTrackOnboarding extends Component {
 
         <TextInput
           style={styles.inputBox}
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
+          onChangeText={(phone) => this.setState({phone})}
+          value={this.state.phone}
         />
 
         <Button
