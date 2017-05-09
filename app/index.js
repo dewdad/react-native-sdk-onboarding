@@ -13,26 +13,44 @@ import RNHyperTrack from 'react-native-hypertrack';
 export default class HyperTrackOnboarding extends Component {
   constructor(props) {
     super(props);
-    this.state = { text: 'Useless placeholder', showLogin: false };
+    this.state = {
+      name: 'User name',
+      phone: 'Phone number',
+      showLogin: true
+    };
 
     // Initialize HyperTrack with publishable token
     RNHyperTrack.initialize('pk_1507af78ef9dca2d250bdd6cf835e315bde4ad96');
   }
 
-  createUser() {
-    RNHyperTrack.createUser(this.state.text, (success) => {
-      console.log('success', success);
+  createUser(successCallback, errorCallback) {
+    console.log(successCallback)
+
+    RNHyperTrack.getOrCreateUser(this.state.name, this.state.phone, this.state.phone, (success) => {
+      successCallback(success);
     }, (error) => {
-      console.log('error', error);
+      errorCallback(error)
     })
   }
 
+  onLoginSuccess(userObject) {
+    console.log('Successful login: ', userObject)
+
+    RNHyperTrack.startTracking((success) => {
+      this.setState({showLogin: false})
+    }, (error) => {
+      console.log('error', error);
+      // TODO add alert for error callbacks
+    });
+  }
+
   logIn() {
-    RNHyperTrack.startTracking();
+    this.createUser((userObject) => this.onLoginSuccess(userObject), (error) => {console.log(error)})
   }
 
   logOut() {
     RNHyperTrack.stopTracking();
+    this.setState({showLogin: true});
   }
 
   showLoginScreen() {
@@ -40,8 +58,8 @@ export default class HyperTrackOnboarding extends Component {
       <View style={styles.container}>
         <TextInput
           style={styles.inputBox}
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
+          onChangeText={(name) => this.setState({name})}
+          value={this.state.name}
         />
 
         <TextInput
@@ -52,7 +70,7 @@ export default class HyperTrackOnboarding extends Component {
 
         <Button
           style={styles.buttonBox}
-          onPress={this.createUser.bind(this)}
+          onPress={() => this.logIn()}
           title='Log in'
           accessibilityLabel='Log in'
         />
@@ -65,7 +83,7 @@ export default class HyperTrackOnboarding extends Component {
       <View style={styles.container}>
         <Button
           style={styles.buttonBox}
-          onPress={this.showLogoutScreen.bind(this)}
+          onPress={this.logOut.bind(this)}
           title='Log out'
           accessibilityLabel='Log out'
         />
