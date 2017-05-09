@@ -5,7 +5,7 @@ import {
   Text,
   TextInput,
   Button,
-  View
+  View, Alert
 } from 'react-native';
 import RNHyperTrack from 'react-native-hypertrack';
 
@@ -20,7 +20,7 @@ export default class HyperTrackOnboarding extends Component {
     };
 
     // Initialize HyperTrack with publishable token
-    RNHyperTrack.initialize('pk_1507af78ef9dca2d250bdd6cf835e315bde4ad96');
+    RNHyperTrack.initialize(YOUR_PUBLISHABLE_KEY);
   }
 
   createUser(successCallback, errorCallback) {
@@ -40,13 +40,13 @@ export default class HyperTrackOnboarding extends Component {
     RNHyperTrack.startTracking((success) => {
       this.setState({showLogin: false})
     }, (error) => {
-      console.log('error', error);
-      // TODO add alert for error callbacks
+      // Raise an alert if there's an error
+      Alert.alert('Error', error);
     });
   }
 
   logIn() {
-    this.createUser((userObject) => this.onLoginSuccess(userObject), (error) => {console.log(error)})
+    this.createUser((userObject) => this.onLoginSuccess(userObject), (error) => { Alert.alert('Error', error); })
   }
 
   logOut() {
