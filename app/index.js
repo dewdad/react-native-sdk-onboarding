@@ -7,12 +7,32 @@ import {
   Button,
   View
 } from 'react-native';
+import RNHyperTrack from 'react-native-hypertrack';
 
 
 export default class HyperTrackOnboarding extends Component {
   constructor(props) {
     super(props);
     this.state = { text: 'Useless placeholder', showLogin: true };
+
+    // Initialize HyperTrack with publishable token
+    RNHyperTrack.initialize('pk_1507af78ef9dca2d250bdd6cf835e315bde4ad96');
+  }
+
+  createUser() {
+    RNHyperTrack.createUser(this.state.text, (success) => {
+      console.log('success', success);
+    }, (error) => {
+      console.log('error', error);
+    })
+  }
+
+  logIn() {
+    RNHyperTrack.startTracking();
+  }
+
+  logOut() {
+    RNHyperTrack.stopTracking();
   }
 
   showLoginScreen() {
@@ -31,7 +51,7 @@ export default class HyperTrackOnboarding extends Component {
         />
 
         <Button
-          onPress={this.showLogoutScreen.bind(this)}
+          onPress={this.createUser.bind(this)}
           title='Log in'
           accessibilityLabel='Log in'
         />
