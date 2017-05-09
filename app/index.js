@@ -13,7 +13,7 @@ import RNHyperTrack from 'react-native-hypertrack';
 export default class HyperTrackOnboarding extends Component {
   constructor(props) {
     super(props);
-    this.state = { text: 'Useless placeholder', showLogin: true };
+    this.state = { text: 'Useless placeholder', showLogin: false };
 
     // Initialize HyperTrack with publishable token
     RNHyperTrack.initialize('pk_1507af78ef9dca2d250bdd6cf835e315bde4ad96');
@@ -39,18 +39,19 @@ export default class HyperTrackOnboarding extends Component {
     return (
       <View style={styles.container}>
         <TextInput
-          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+          style={styles.inputBox}
           onChangeText={(text) => this.setState({text})}
           value={this.state.text}
         />
 
         <TextInput
-          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+          style={styles.inputBox}
           onChangeText={(text) => this.setState({text})}
           value={this.state.text}
         />
 
         <Button
+          style={styles.buttonBox}
           onPress={this.createUser.bind(this)}
           title='Log in'
           accessibilityLabel='Log in'
@@ -63,6 +64,7 @@ export default class HyperTrackOnboarding extends Component {
     return (
       <View style={styles.container}>
         <Button
+          style={styles.buttonBox}
           onPress={this.showLogoutScreen.bind(this)}
           title='Log out'
           accessibilityLabel='Log out'
@@ -86,14 +88,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
+
+  inputBox: {
+    margin: 10,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    width: 300
+  },
+
+  buttonBox: {
     textAlign: 'center',
     margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+    width: 200
+  }
 });
