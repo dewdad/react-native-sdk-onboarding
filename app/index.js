@@ -3,24 +3,58 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
+  TextInput,
+  Button,
   View
 } from 'react-native';
 
+
 export default class HyperTrackOnboarding extends Component {
-  render() {
+  constructor(props) {
+    super(props);
+    this.state = { text: 'Useless placeholder', showLogin: true };
+  }
+
+  showLoginScreen() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
+        <TextInput
+          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+          onChangeText={(text) => this.setState({text})}
+          value={this.state.text}
+        />
+
+        <TextInput
+          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+          onChangeText={(text) => this.setState({text})}
+          value={this.state.text}
+        />
+
+        <Button
+          onPress={this.showLogoutScreen.bind(this)}
+          title='Log in'
+          accessibilityLabel='Log in'
+        />
       </View>
+    );
+  }
+
+  showLogoutScreen() {
+    return (
+      <View style={styles.container}>
+        <Button
+          onPress={this.showLogoutScreen.bind(this)}
+          title='Log out'
+          accessibilityLabel='Log out'
+        />
+      </View>
+    );
+  }
+
+  render() {
+    let view = this.state.showLogin ? this.showLoginScreen() : this.showLogoutScreen();
+    return (
+      view
     );
   }
 }
