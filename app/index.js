@@ -5,9 +5,18 @@ import {
   Text,
   TextInput,
   Button,
-  View, Alert
+  View, Alert, NativeModules
 } from 'react-native';
-import RNHyperTrack from 'react-native-hypertrack';
+import {RNHyperTrack as RNHyperTrackImport} from 'react-native-hypertrack';
+
+
+if (NativeModules.RNHyperTrack != undefined) {
+  // Import for iOS setup
+  var RNHyperTrack = NativeModules.RNHyperTrack;
+} else {
+  // Import for Android setup
+  var RNHyperTrack = RNHyperTrackImport;
+}
 
 
 export default class HyperTrackOnboarding extends Component {
