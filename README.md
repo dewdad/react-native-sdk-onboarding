@@ -18,7 +18,7 @@ react-native link react-native-hypertrack
 
 1. Upgrade compileSdkVersion, buildToolsVersion, support library version
 For the Android SDK, edit the `build.gradle` file in your `android/app` directory 
-* https://github.com/hypertrack/react-native-sdk-onboarding/blob/master/android/build.gradle
+* https://github.com/hypertrack/react-native-sdk-onboarding/blob/master/android/app/build.gradle
 * L86, L87, L131
 
     ```groovy
@@ -85,7 +85,7 @@ Configure your publishable key and initialise the SDK in the `constructor` metho
 * L22-23
 
 > **Account keys**
-> Sign up to get account keys if you haven't already.
+> [Sign up](https://www.hypertrack.com/signup) to get account keys if you haven't already.
 
 # Identify device
 The SDK needs a **User** object to identify the device. The SDK has a convenience method `getOrCreateUser()` to lookup an existing user using a unique identifier (called `lookupId`) or create one if necessary.
