@@ -14,10 +14,69 @@ react-native link react-native-hypertrack
 ```
 
 # Install the SDK - 2
-For the Android SDK, edit the `build.gradle` file in your app directory to add a custom repository address where the SDK is available.
+## Getting Started Android 
 
+1. Upgrade compileSdkVersion, buildToolsVersion, support library version
+For the Android SDK, edit the `build.gradle` file in your `android/app` directory 
 * https://github.com/hypertrack/react-native-sdk-onboarding/blob/master/android/build.gradle
-* L23-24
+* L86, L87, L131
+
+    ```groovy
+    android {
+        compileSdkVersion 26
+        buildToolsVersion "26.0.3"
+        ...
+    }
+    ```
+
+    ```groovy
+    dependencies {
+        ...
+        compile project(':react-native-hypertrack')
+        compile fileTree(dir: "libs", include: ["*.jar"])
+        compile "com.android.support:appcompat-v7:26.1.0"
+        compile "com.facebook.react:react-native:+"  // From node_modules
+        ...
+    }
+    ```
+
+2. Adds maven dependency for Google Libraries
+For the Android SDK, edit the `build.gradle` file in your `android` directory 
+
+    ```groovy
+    // Top-level build file where you can add configuration options common to all sub-projects/modules.
+    buildscript {
+        repositories {
+            jcenter()
+            maven {
+                url 'https://maven.google.com/'
+                name 'Google'
+            }
+        }
+        dependencies {
+            classpath 'com.android.tools.build:gradle:3.0.1'
+            classpath 'com.google.gms:google-services:3.1.0'
+
+            // NOTE: Do not place your application dependencies here; they belong
+            // in the individual module build.gradle files
+        }
+    }
+
+    allprojects {
+        repositories {
+            mavenLocal()
+            jcenter()
+            maven {
+                // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+                url "$rootDir/../node_modules/react-native/android"
+            }
+            maven {
+                url 'https://maven.google.com/'
+                name 'Google'
+            }
+        }
+    }
+    ```
 
 # Install the SDK - 3
 Configure your publishable key and initialise the SDK in the `constructor` method of your Component class. This needs to be done only once in the app lifecycle.
