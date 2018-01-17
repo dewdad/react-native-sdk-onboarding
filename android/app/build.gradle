@@ -83,13 +83,13 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.3"
 
     defaultConfig {
         applicationId "com.hypertrackonboarding"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         ndk {
@@ -128,7 +128,7 @@ android {
 dependencies {
     compile project(':react-native-hypertrack')
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:25.3.1"
+    compile "com.android.support:appcompat-v7:26.1.0"
     compile "com.facebook.react:react-native:+"  // From node_modules
 }
 
@@ -137,4 +137,14 @@ dependencies {
 task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
+}
+
+/*
+* Enable FCM integration for real time tracking by adding a google-services.json
+* Once you have either an existing account on <a href="https://console.developers.google.com/">Google Developer</a> or a new account <a href="https://console.firebase.google.com">Firebase console</a>, you will need to add <a href="https://support.google.com/firebase/answer/7015592">google-services.json</a> file for your app to remove the below compilation failure.
+*/
+File googleServicesFile = rootProject.file("app/google-services.json");
+if (googleServicesFile.exists()) {
+    System.out.println("Google Service File Exist");
+    apply plugin: 'com.google.gms.google-services'
 }
