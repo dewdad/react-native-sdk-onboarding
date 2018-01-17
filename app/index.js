@@ -5,7 +5,7 @@ import {
   Text,
   TextInput,
   Button,
-  View, Alert, NativeModules
+  View, Alert, NativeModules, DeviceEventEmitter
 } from 'react-native';
 import {RNHyperTrack as RNHyperTrackImport} from 'react-native-hypertrack';
 
@@ -29,7 +29,20 @@ export default class HyperTrackOnboarding extends Component {
     };
 
     // Initialize HyperTrack with publishable token
-    RNHyperTrack.initialize(YOUR_PUBLISHABLE_KEY);
+    RNHyperTrack.initialize("YOUR_PUBLISHABLE_KEY");
+  }
+
+  //Location and Activity Changed Events 
+  //For now only works in Android
+  componentWillMount() {
+    DeviceEventEmitter.addListener('location.changed', function(e) {
+      // handle event.
+      console.log(e)
+    });
+    DeviceEventEmitter.addListener('activity.changed', function(e) {
+      // handle event.
+      console.log(e)
+    });
   }
 
   createUser(successCallback, errorCallback) {
