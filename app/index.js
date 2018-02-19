@@ -18,7 +18,6 @@ if (NativeModules.RNHyperTrack != undefined) {
   var RNHyperTrack = RNHyperTrackImport;
 }
 
-
 export default class HyperTrackOnboarding extends Component {
   constructor(props) {
     super(props);
