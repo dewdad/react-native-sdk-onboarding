@@ -5,7 +5,7 @@ import {
   Text,
   TextInput,
   Button,
-  View, Alert, NativeModules, DeviceEventEmitter
+  View, Alert, NativeModules, DeviceEventEmitter,AsyncStorage
 } from 'react-native';
 import {RNHyperTrack as RNHyperTrackImport} from 'react-native-hypertrack';
 
@@ -24,11 +24,12 @@ export default class HyperTrackOnboarding extends Component {
     this.state = {
       name: 'User name',
       phone: 'Phone number',
-      showLogin: true
+      isLogin: false,
+      actionId:""
     };
 
     // Initialize HyperTrack with publishable token
-    RNHyperTrack.initialize("YOUR_PUBLISHABLE_KEY");
+    RNHyperTrack.initialize("pk_e956d4c123e8b726c10b553fe62bbaa9c1ac9451");
   }
 
   //Location and Activity Changed Events 
@@ -42,14 +43,28 @@ export default class HyperTrackOnboarding extends Component {
       // handle event.
       console.log(e)
     });
+
+    AsyncStorage.getItem('isLogin').then((data) =>{
+       
+          this.setState({isLogin: JSON.parse(data)})
+        
+    });
+    AsyncStorage.getItem('actionId').then((data) =>{
+       
+      this.setState({actionId: data}) 
+    });
+    RNHyperTrack.requestLocationServices();
+    RNHyperTrack. requestLocationAuthorization('Location Permission','Please enable location')
+
   }
 
   createUser(successCallback, errorCallback) {
     console.log(successCallback)
 
-    RNHyperTrack.getOrCreateUser(this.state.name, this.state.phone, this.state.phone, (success) => {
+    RNHyperTrack.getOrCreateUser(this.state.name, this.state.phone, this.state.phone).then((success) => {
       successCallback(success);
     }, (error) => {
+      console.log("Error Occured")
       errorCallback(error)
     })
   }
@@ -58,11 +73,15 @@ export default class HyperTrackOnboarding extends Component {
     console.log('Successful login: ', userObject)
 
     // Start tracking on HyperTrack
-    RNHyperTrack.startTracking((success) => {
-      this.setState({showLogin: false})
+    RNHyperTrack.startTracking().then((success) => {
+      AsyncStorage.setItem(
+        'isLogin',JSON.stringify(true)
+      );
+      this.setState({isLogin: true})
+      
     }, (error) => {
       // Raise an alert if there's an error
-      Alert.alert('Error', error);
+      Alert.alert('Error', error.message);
     });
   }
 
@@ -73,7 +92,46 @@ export default class HyperTrackOnboarding extends Component {
   logOut() {
     // Stop tracking on HyperTrack
     RNHyperTrack.stopTracking();
-    this.setState({showLogin: true});
+    AsyncStorage.removeItem(
+      'isLogin'
+    );
+    this.setState({isLogin: true});
+  }
+
+  createAction(){
+    var params = {
+      'type' : 'VISIT',
+      'expected_place': {
+          'name':'Instawork HQ',
+          'address':'340 Brannan Street',
+          'city':'San Francisco',
+          'state':'CA',
+          'zip_code':'94107',
+          'country':'USA'
+          // 'location':{
+          //     'type':'Point',
+          //     'coordinates':[
+          //        77.619274,12.946016
+          //     ]
+          // }
+      },
+      // 'expected_place_id': 'd05d714f-b141-4f37-826a-ff3d434cf1b0',
+    }
+    console.log(params);
+    RNHyperTrack.createAndAssignAction(params).then((success) => {
+      console.log('Action Create',success)
+      this.state.actionId = JSON.parse(success).id;
+      AsyncStorage.setItem(
+        'actionId',this.state.actionId
+      );
+    }, (error) => {
+      // Raise an alert if there's an error
+      Alert.alert('Error', error.message);
+    });
+  }
+
+  completeAction(){
+    RNHyperTrack.completeAction(this.state.actionId)
   }
 
   showLoginScreen() {
@@ -110,12 +168,26 @@ export default class HyperTrackOnboarding extends Component {
           title='Log out'
           accessibilityLabel='Log out'
         />
+
+         <Button
+          style={styles.buttonBox}
+          onPress={this.createAction.bind(this)}
+          title='Create Action'
+          accessibilityLabel='Create Action'
+        />
+
+         <Button
+          style={styles.buttonBox}
+          onPress={this.completeAction.bind(this)}
+          title='Complete Action'
+          accessibilityLabel='Complete Action'
+        />
       </View>
     );
   }
 
   render() {
-    let view = this.state.showLogin ? this.showLoginScreen() : this.showLogoutScreen();
+    let view = this.state.isLogin ?  this.showLogoutScreen():this.showLoginScreen();
     return (
       view
     );
