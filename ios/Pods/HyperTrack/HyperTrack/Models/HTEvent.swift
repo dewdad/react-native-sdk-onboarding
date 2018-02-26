@@ -7,162 +7,94 @@
 //
 
 import Foundation
-
-
-extension Date {
-    static let iso8601Formatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .iso8601)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
-        return formatter
-    }()
-    var iso8601: String {
-        return Date.iso8601Formatter.string(from: self)
-    }
-}
-
-extension String {
-    var dateFromISO8601: Date? {
-        return Date.iso8601Formatter.date(from: self)
-    }
-}
-
+import CocoaLumberjack
 
 /**
  The HyperTrackEvent type enum. Represents all the different types of events possible.
  */
-@objc public enum HyperTrackEventType: Int, CustomStringConvertible {
+public enum HyperTrackEventType: String {
+    
     
     /**
      Event type for start tracking
      */
-    case trackingStarted
+    case trackingStarted = "tracking.started"
     
     /**
      Event type for end tracking
      */
-    case trackingEnded
-    
-    /**
-     Event type for stop detected
-     */
-    case stopStarted
-    
-    /**
-     Event type for stop ended
-     */
-    case stopEnded
+    case trackingEnded = "tracking.ended"
     
     /**
      Event type for location changed
      */
-    case locationChanged
+    case locationChanged = "location.changed"
     
     /**
-     Event type for activity changed
+     Event type for activity started
      */
-    case activityChanged
+    case activityStarted = "activity.started"
+    
+    /**
+     Event type for activity ended
+     */
+    case activityEnded = "activity.ended"
+    
+    /**
+     Event type for activity updated
+     */
+    case activityUpdated = "activity.updated"
     
     /**
      Event type for device power status changed
      */
-    case powerChanged
-    
+    case powerChanged  = "health.power.changed"
+
     /**
      Event type for device radio status changed
      */
-    case radioChanged
-    
+    case radioChanged = "health.radio.changed"
+
     /**
      Event type for device location configuration changed
      */
-    case locationConfigChanged
-    
+    case locationConfigChanged = "health.location.changed"
+
     /**
      Event type for device info changed
      */
-    case infoChanged
+    case infoChanged = "health.info.changed"
     
-    /**
+     /**
      Event type for action completed
      */
-    case actionCompleted
-    
-    init?(value: String) {
-        switch value {
-        case "tracking.started":
-            self = .trackingStarted
-        case "tracking.ended":
-            self = .trackingEnded
-        case "stop.started":
-            self = .stopStarted
-        case "stop.ended":
-            self = .stopEnded
-        case "location.changed":
-            self = .locationChanged
-        case "activity.changed":
-            self = .activityChanged
-        case "device.power.changed":
-            self = .powerChanged
-        case "device.radio.changed":
-            self = .radioChanged
-        case "device.location_config.changed":
-            self = .locationConfigChanged
-        case "device.info.changed":
-            self = .infoChanged
-        case "action.completed":
-            self = .actionCompleted
-        //TODO: fallback to something innocuous for default
-        default:
-            self = .infoChanged
-        }
-    }
-    
-    public var description: String {
-        switch self {
-        case .trackingStarted:
-            return "tracking.started"
-        case .trackingEnded:
-            return "tracking.ended"
-        case .stopStarted:
-            return "stop.started"
-        case .stopEnded:
-            return "stop.ended"
-        case .locationChanged:
-            return "location.changed"
-        case .activityChanged:
-            return "activity.changed"
-        case .powerChanged:
-            return "device.power.changed"
-        case .radioChanged:
-            return "device.radio.changed"
-        case .locationConfigChanged:
-            return "device.location_config.changed"
-        case .infoChanged:
-            return "device.info.changed"
-        case .actionCompleted:
-            return "action.completed"
-        }
-    }
+    case actionCompleted = "action.completed"
 }
-
 
 /**
  The HyperTrackEvent object that represents events as they happen in the lifetime of a tracking session
  */
-@objc public class HyperTrackEvent:NSObject {
-    
+@objc public class HyperTrackEvent: NSObject {
+
     /**
      Unique (uuid4) identifier for the event
      */
-    public var id:Int64?
-    
+    public var id: Int64?
+
     /**
      Id of user for the event
      */
     public let userId: String
+    
+    /**
+     Id of session for the event
+     */
+    public let sessionId: String
+    
+    /**
+     Id of device for the event
+     */
+    public let deviceId: String
     
     /**
      Timestamp when the event was recorded
@@ -174,41 +106,111 @@ extension String {
      */
     public let eventType: HyperTrackEventType
     
+    
     /**
-     Location of the event (optional)
+     activityLookUpId
      */
-    public let location: HyperTrackLocation?
+    public let activityLookUpId: String
+    
+    /**
+     locationLookUpId
+     */
+    public var locationLookUpId: String
+    
+    
+    /**
+     healthLookUpId
+     */
+    public let healthLookUpId: String
     
     /**
      Metadata for the event
      */
-    public let data: [String:Any]
-    
-    init(userId: String, recordedAt: Date, eventType: String, location: HyperTrackLocation?, data: [String:Any] = [String: Any]()) {
+    public var data: [String: Any]
+
+    init(userId: String,
+         sessionId: String,
+         deviceId: String,
+         recordedAt: Date,
+         eventType: HyperTrackEventType,
+         activityLookUpId: String,
+         locationLookUpId: String,
+         healthLookUpId: String,
+         data: [String: Any] = [String: Any]()) {
         self.id = nil
         self.userId = userId
+        self.deviceId = deviceId
+        self.sessionId = sessionId
         self.recordedAt = recordedAt
-        self.eventType = HyperTrackEventType(value: eventType)!
-        self.location = location
+        self.eventType = eventType
+        self.activityLookUpId = activityLookUpId
+        self.healthLookUpId = healthLookUpId
+        self.locationLookUpId = locationLookUpId
         self.data = data
     }
     
+    public func getActivity() -> HTSDKActivity? {
+        if self.activityLookUpId != "" {
+            return HTSDKDataManager.sharedInstance.activityManager.getActivityFromLookUpId(lookUpId: self.activityLookUpId)
+        }
+        return nil
+    }
+    
+    public func getLocation() -> HyperTrackLocation? {
+        if self.locationLookUpId != "" {
+            return HTSDKDataManager.sharedInstance.locationManager.getLocationFromLookUpId(lookUpId: self.locationLookUpId)
+        }
+        return nil
+    }
+    
+    public func getHealth() -> HTSDKHealth? {
+        if self.healthLookUpId != ""{
+            return HTSDKDataManager.sharedInstance.healthManager.getHealthForLookUpId(lookupId: self.healthLookUpId)
+        }
+        return nil
+    }
+
     internal func toDict() -> [String: Any] {
-        var dict = [
+        let dict = [
             "user_id": self.userId,
+            "session_id": self.sessionId,
+            "device_id": self.deviceId,
+            "activity_lookupid": self.activityLookUpId,
+            "location_lookupid": self.locationLookUpId,
+            "health_lookupid": self.healthLookUpId,
             "recorded_at": self.recordedAt.iso8601,
-            "type": self.eventType.description,
+            "type": self.eventType.rawValue,
             "data": self.data
             ] as [String: Any]
-        
-        guard let loc = location else {
-            return dict
-        }
-        
-        dict["location"] = loc.toDict()
         return dict
     }
     
+    internal func toServerParams() -> [String: Any] {
+        var dict = [
+            "user_id": self.userId,
+            "session_id": self.sessionId,
+            "device_id": self.deviceId,
+            "recorded_at": self.recordedAt.iso8601,
+            "type": self.eventType.rawValue,
+            "data": self.data
+            ] as [String: Any]
+        
+        if let activity = self.getActivity(){
+            dict["activity"] = activity.toDict()
+        }
+        
+        if let location = self.getLocation(){
+            dict["location"] =  location.toDict()
+        }
+        
+        if let health = self.getHealth(){
+            dict["health"] =  health.toDict()
+        }
+
+        return dict
+    }
+
+
     internal func toJson() -> String? {
         let dict = self.toDict()
         do {
@@ -216,65 +218,91 @@ extension String {
             let jsonString = String(data: jsonData, encoding: String.Encoding.utf8)
             return jsonString
         } catch {
-            HTLogger.shared.error("Error serializing object to JSON: " + error.localizedDescription)
+            DDLogError("Error serializing object to JSON: " + error.localizedDescription)
             return nil
         }
     }
-    
-    
-    internal static func fromDict(dict:[String:Any]) -> HyperTrackEvent? {
+
+    internal static func fromDict(dict: [String: Any]) -> HyperTrackEvent? {
         guard let userId = dict["user_id"] as? String,
             let recordedAt = dict["recorded_at"] as? String,
-            let eventType = dict["type"] as? String,
-            let data = dict["data"] as? [String:Any] else {
+            let eventType = dict["type"] as? String
+        else {
                 return nil
         }
-        
+
         guard let recordedAtDate = recordedAt.dateFromISO8601 else {
             return nil
         }
         
-        guard let location = dict["location"] as? [String:Any] else {
-            let event = HyperTrackEvent(
-                userId:userId,
-                recordedAt:recordedAtDate,
-                eventType:eventType,
-                location:nil,
-                data:data
-            )
-            return event
-        }
+        let activityLookUpID = dict["activity_lookupid"] as? String ?? ""
+        let locationLookUpId = dict["location_lookupid"] as? String ?? ""
+        let healthLookUpId = dict["health_lookupid"] as? String ?? ""
+        let deviceID = dict["device_id"] as? String ?? ""
+        let sessionID = dict["session_id"] as? String ?? ""
         
-        let event = HyperTrackEvent(
-            userId:userId,
-            recordedAt:recordedAtDate,
-            eventType:eventType,
-            location:HyperTrackLocation.fromDict(dict:location),
-            data:data
-        )
+        let event = HyperTrackEvent(userId: userId, sessionId: sessionID, deviceId: deviceID, recordedAt: recordedAtDate, eventType: HyperTrackEventType(rawValue: eventType)!, activityLookUpId: activityLookUpID, locationLookUpId: locationLookUpId, healthLookUpId: healthLookUpId)
         return event
+
     }
-    
-    internal static func fromJson(text:String) -> HyperTrackEvent? {
+
+    internal static func fromJson(text: String) -> HyperTrackEvent? {
         if let data = text.data(using: .utf8) {
             do {
                 let eventDict = try JSONSerialization.jsonObject(with: data, options: [])
-                
-                guard let dict = eventDict as? [String : Any] else {
+
+                guard let dict = eventDict as? [String: Any] else {
                     return nil
                 }
-                
-                return self.fromDict(dict:dict)
+
+                return self.fromDict(dict: dict)
             } catch {
-                HTLogger.shared.error("Error in getting event from json: " + error.localizedDescription)
+                DDLogError("Error in getting event from json: " + error.localizedDescription)
             }
         }
         return nil
     }
+
+}
+
+
+extension Date {
+    static let iso8601Formatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .iso8601)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
+        return formatter
+    }()
     
-    func save() {
-        let id = EventsDatabaseManager.sharedInstance.insert(event:self)
-        self.id = id
-        Settings.setLastEventSavedAt(eventSavedAt: Date())
+    static let iso8601Second: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .iso8601)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssz"
+        return formatter
+    }()
+    
+    var iso8601: String {
+        return Date.iso8601Formatter.string(from: self)
     }
 }
+
+extension String {
+    var dateFromISO8601: Date? {
+        
+        if let date =  Date.iso8601Formatter.date(from: self) {
+            return date
+        } else {
+            if let date = Date.iso8601Second.date(from: self) {
+                return date
+            }
+        }
+        
+        return nil
+        
+    }
+}
+

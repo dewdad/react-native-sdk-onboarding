@@ -8,37 +8,37 @@
 
 import Foundation
 
-class CompletedView : UIView {
-    
+class CompletedView: UIView {
+
     @IBOutlet weak var startTime: UILabel!
     @IBOutlet weak var endTime: UILabel!
     @IBOutlet weak var origin: UILabel!
     @IBOutlet weak var destination: UILabel!
-    
-    func completeUpdate(startTime : Date?, endTime : Date?, origin : String?, destination : String?) {
-        
+
+    func completeUpdate(startTime: Date?, endTime: Date?, origin: String?, destination: String?) {
+
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "hh:mm a, MMM dd"
-        
-        if (startTime == nil) {
+
+        if startTime == nil {
             self.startTime.text = "--"
         } else {
             self.startTime.text = dateFormatter.string(from: startTime!)
         }
-        
-        if (endTime == nil) {
+
+        if endTime == nil {
             self.endTime.text = "--"
         } else {
             self.endTime.text = dateFormatter.string(from: endTime!)
         }
-        
-        if (origin == nil) {
+
+        if origin == nil {
             self.origin.text = "--"
         } else {
             self.origin.text = origin
         }
-        
-        if (destination == nil) {
+
+        if destination == nil {
             self.destination.text = "--"
         } else {
             self.destination.text = destination

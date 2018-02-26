@@ -53,7 +53,7 @@ export default class HyperTrackOnboarding extends Component {
        
       this.setState({actionId: data}) 
     });
-    RNHyperTrack.requestLocationServices();
+   
     RNHyperTrack. requestLocationAuthorization('Location Permission','Please enable location')
 
   }
@@ -124,6 +124,9 @@ export default class HyperTrackOnboarding extends Component {
       AsyncStorage.setItem(
         'actionId',this.state.actionId
       );
+
+      Alert.alert('Action Created');
+
     }, (error) => {
       // Raise an alert if there's an error
       Alert.alert('Error', error.message);
@@ -132,6 +135,7 @@ export default class HyperTrackOnboarding extends Component {
 
   completeAction(){
     RNHyperTrack.completeAction(this.state.actionId)
+    Alert.alert('Action Completed');
   }
 
   showLoginScreen() {

@@ -9,17 +9,25 @@
 import UIKit
 import MapKit
 
-class HTMapAnnotation: MKPointAnnotation {
-  
-    var id : String?
+@objc public enum MarkerType: Int {
+    case DESTINATION_MARKER = 0
+    case HERO_MARKER = 1
+    case HERO_MARKER_WITH_ETA = 2
+}
+
+@objc public class HTMapAnnotation: MKPointAnnotation {
+
+    var id: String?
     dynamic var disableRotation: Bool = false
     var image: UIImage?
-    var colour: UIColor?
-    var type = HTConstants.MarkerType.HERO_MARKER
-    
+    public var type = MarkerType.HERO_MARKER
+    var action: HyperTrackAction?
+    var location: CLLocation?
+    var place: HyperTrackPlace?
+    var currentHeading: CLLocationDirection?
+
     override init() {
         super.init()
         self.image = nil
-        self.colour = UIColor.red
     }
 }

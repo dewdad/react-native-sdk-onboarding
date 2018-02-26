@@ -2943,6 +2943,10 @@ react-devtools-core@^2.0.8:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
+react-native-hypertrack@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/react-native-hypertrack/-/react-native-hypertrack-3.0.4.tgz#404ce3fcfe3659bcef64af050826b7570464ba7c"
+
 react-native@0.44.0:
   version "0.44.0"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.44.0.tgz#06427a30053f2d555c60fe0b9afcc6c778db09de"

@@ -8,6 +8,8 @@
 
 import Foundation
 
-class DestinationMarkerView : UIView {
-  
+class DestinationMarkerView: UIView {
+
+    @IBOutlet weak var markerImage: UIImageView!
+
 }

@@ -35,8 +35,12 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>location permission</string>
+  <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+  <string>Always and When In use Permission</string>
+  <key>NSLocationAlwaysUsageDescription</key>
+  <string>Always Use Permission</string>
+  <key>NSLocationWhenInUseUsageDescription</key>
+  <string>When In use permission</string>
 	<key>NSMotionUsageDescription</key>
 	<string>motion permission</string>
 	<key>UIBackgroundModes</key>
