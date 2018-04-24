@@ -29,8 +29,7 @@ export default class HyperTrackOnboarding extends Component {
     };
 
     // Initialize HyperTrack with publishable token
-    RNHyperTrack.initialize("pk_e956d4c123e8b726c10b553fe62bbaa9c1ac9451");
-    // RNHyperTrack.initialize(<YOUR-PUBLISHABLE-TOKEN>);
+    RNHyperTrack.initialize(<YOUR-PUBLISHABLE-TOKEN>);
   }
 
   //Location and Activity Changed Events 
