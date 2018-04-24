@@ -30,6 +30,7 @@ export default class HyperTrackOnboarding extends Component {
 
     // Initialize HyperTrack with publishable token
     RNHyperTrack.initialize("pk_e956d4c123e8b726c10b553fe62bbaa9c1ac9451");
+    // RNHyperTrack.initialize(<YOUR-PUBLISHABLE-TOKEN>);
   }
 
   //Location and Activity Changed Events 
@@ -54,8 +55,7 @@ export default class HyperTrackOnboarding extends Component {
       this.setState({actionId: data}) 
     });
    
-    RNHyperTrack. requestLocationAuthorization('Location Permission','Please enable location')
-
+    RNHyperTrack.requestAlwaysLocationAuthorization('Location Permission','Please enable location')
   }
 
   createUser(successCallback, errorCallback) {
@@ -64,7 +64,7 @@ export default class HyperTrackOnboarding extends Component {
     RNHyperTrack.getOrCreateUser(this.state.name, this.state.phone, this.state.phone).then((success) => {
       successCallback(success);
     }, (error) => {
-      console.log("Error Occured")
+      console.log("Error Occured while fetching user details.")
       errorCallback(error)
     })
   }
@@ -73,7 +73,7 @@ export default class HyperTrackOnboarding extends Component {
     console.log('Successful login: ', userObject)
 
     // Start tracking on HyperTrack
-    RNHyperTrack.startTracking().then((success) => {
+    RNHyperTrack.resumeTracking().then((success) => {
       AsyncStorage.setItem(
         'isLogin',JSON.stringify(true)
       );
@@ -91,7 +91,7 @@ export default class HyperTrackOnboarding extends Component {
 
   logOut() {
     // Stop tracking on HyperTrack
-    RNHyperTrack.stopTracking();
+    RNHyperTrack.pauseTracking();
     AsyncStorage.removeItem(
       'isLogin'
     );
@@ -107,18 +107,17 @@ export default class HyperTrackOnboarding extends Component {
           'city':'San Francisco',
           'state':'CA',
           'zip_code':'94107',
-          'country':'USA'
-          // 'location':{
-          //     'type':'Point',
-          //     'coordinates':[
-          //        77.619274,12.946016
-          //     ]
-          // }
+          'country':'USA',
+          'location':{
+              'type':'Point',
+              'coordinates':[
+                 77.619274,12.946016
+              ]
+          }
       },
-      // 'expected_place_id': 'd05d714f-b141-4f37-826a-ff3d434cf1b0',
     }
     console.log(params);
-    RNHyperTrack.createAndAssignAction(params).then((success) => {
+    RNHyperTrack.createAction(params).then((success) => {
       console.log('Action Create',success)
       this.state.actionId = JSON.parse(success).id;
       AsyncStorage.setItem(
