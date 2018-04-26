@@ -35,14 +35,14 @@ export default class HyperTrackOnboarding extends Component {
   //Location and Activity Changed Events 
   //For now only works in Android
   componentWillMount() {
-    DeviceEventEmitter.addListener('location.changed', function(e) {
-      // handle event.
-      console.log(e)
-    });
-    DeviceEventEmitter.addListener('activity.changed', function(e) {
-      // handle event.
-      console.log(e)
-    });
+    // DeviceEventEmitter.addListener('location.changed', function(e) {
+    //   // handle event.
+    //   console.log(e)
+    // });
+    // DeviceEventEmitter.addListener('activity.changed', function(e) {
+    //   // handle event.
+    //   console.log(e)
+    // });
 
     AsyncStorage.getItem('isLogin').then((data) =>{
        
