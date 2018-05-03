@@ -22,6 +22,8 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
+      new MainReactPackage();
+      new RNHyperTrackPackage();
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
           new RNHyperTrackPackage()
