@@ -82,45 +82,35 @@ For the Android SDK, edit the `build.gradle` file in your `android` directory
 Configure your publishable key and initialise the SDK in the `constructor` method of your Component class. This needs to be done only once in the app lifecycle.
 
 * https://github.com/hypertrack/react-native-sdk-onboarding/blob/master/app/index.js
-* L22-23
+* L31-32
 
 > **Account keys**
 > [Sign up](https://www.hypertrack.com/signup) to get account keys if you haven't already.
 
 # Identify device
-The SDK needs a **User** object to identify the device. The SDK has a convenience method `getOrCreateUser()` to lookup an existing user using a unique identifier (called `lookupId`) or create one if necessary.
+The SDK needs a **User** object to identify the device. The SDK has a convenience method `getOrCreateUser()` to lookup an existing user using a unique identifier (called `uniqueId`) or create one if necessary.
 
 Method parameters
 
 * userName - Name of the user entity
 * phone - Phone number of the user entity
-* lookupId - Unique identifier for your user
+* uniqueId - Unique identifier for your user
 
 Use this API in conjunction to your app's login flow, and call `getOrCreate` at the end of a successful login flow. This API is a network call, and needs to be done only once in the user session lifecycle.
 
 > Waiting for your app to run
 
 * https://github.com/hypertrack/react-native-sdk-onboarding/blob/master/app/index.js
-* L29-32
+* L61-68
 
-# Start tracking
-Use the `startTracking()` method to start tracking. Once the user starts tracking, you can see **Trips** and **Stops** of the user.
-
-This is a non-blocking API call, and will also work when the device is offline. 
-
-> Waiting for your app to run
+# Create an Action
+Create and assign an Action object to the user. The createAction method accepts a js dictionary object with expected_place_id, type, unique_id and expected_at keys.
 
 * https://github.com/hypertrack/react-native-sdk-onboarding/blob/master/app/index.js
-* L39-44
+* L119-131
 
 > **View on the dashboard**
 > View the user's trips and stops here.
-
-# Stop tracking
-Use the `stopTracking()` method to stop tracking. This can be done when the user logs out.
-
-* https://github.com/hypertrack/react-native-sdk-onboarding/blob/master/app/index.js
-* L51-52
 
 > **Ready to deploy!**
 > Your React Native app is all set to be deployed. As your users update and log in, their live location will be visualized on this dashboard.
