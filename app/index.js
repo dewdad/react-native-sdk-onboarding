@@ -29,7 +29,7 @@ export default class HyperTrackOnboarding extends Component {
     };
 
     // Initialize HyperTrack with publishable token
-      RNHyperTrack.initialize("pk_e956d4c123e8b726c10b553fe62bbaa9c1ac9451");
+      RNHyperTrack.initialize(HYPERTRACK_PUBLISHABLE_KEY);
   }
 
   //Location and Activity Changed Events 
@@ -60,7 +60,7 @@ export default class HyperTrackOnboarding extends Component {
   createUser(successCallback, errorCallback) {
     console.log(successCallback)
 
-    RNHyperTrack.getUser('3c50c6e5-bd7f-4d5c-ad49-de970b4626bd').then((success) => {
+    RNHyperTrack.getOrCreateUser(this.state.name, this.state.phone, this.state.phone).then((success) => {
       successCallback(success);
     }, (error) => {
       console.log("Error Occured while fetching user details.")
