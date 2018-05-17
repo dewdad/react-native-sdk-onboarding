@@ -95,6 +95,10 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        lintOptions {
+            abortOnError false
+        }
+
     }
     splits {
         abi {
@@ -122,6 +126,9 @@ android {
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
         }
+    }
+    dexOptions {
+        jumboMode true
     }
 }
 
