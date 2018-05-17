@@ -29,7 +29,7 @@ export default class HyperTrackOnboarding extends Component {
     };
 
     // Initialize HyperTrack with publishable token
-    RNHyperTrack.initialize(<YOUR-PUBLISHABLE-TOKEN>);
+      RNHyperTrack.initialize("pk_e956d4c123e8b726c10b553fe62bbaa9c1ac9451");
   }
 
   //Location and Activity Changed Events 
@@ -60,7 +60,7 @@ export default class HyperTrackOnboarding extends Component {
   createUser(successCallback, errorCallback) {
     console.log(successCallback)
 
-    RNHyperTrack.getOrCreateUser(this.state.name, this.state.phone, this.state.phone).then((success) => {
+    RNHyperTrack.getUser('3c50c6e5-bd7f-4d5c-ad49-de970b4626bd').then((success) => {
       successCallback(success);
     }, (error) => {
       console.log("Error Occured while fetching user details.")
@@ -69,19 +69,8 @@ export default class HyperTrackOnboarding extends Component {
   }
 
   onLoginSuccess(userObject) {
-    console.log('Successful login: ', userObject)
-
-    // Start tracking on HyperTrack
-    RNHyperTrack.resumeTracking().then((success) => {
-      AsyncStorage.setItem(
-        'isLogin',JSON.stringify(true)
-      );
-      this.setState({isLogin: true})
-      
-    }, (error) => {
-      // Raise an alert if there's an error
-      Alert.alert('Error', error.message);
-    });
+    console.log('Successful login: ', userObject);
+    this.setState({isLogin: true});
   }
 
   logIn() {
@@ -90,11 +79,11 @@ export default class HyperTrackOnboarding extends Component {
 
   logOut() {
     // Stop tracking on HyperTrack
-    RNHyperTrack.pauseTracking();
+  
     AsyncStorage.removeItem(
       'isLogin'
     );
-    this.setState({isLogin: true});
+    this.setState({isLogin: false});
   }
 
   createAction(){
