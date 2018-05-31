@@ -71,6 +71,7 @@ export default class HyperTrackOnboarding extends Component {
   onLoginSuccess(userObject) {
     console.log('Successful login: ', userObject);
     this.setState({isLogin: true});
+    RNHyperTrack.resumeTracking();
   }
 
   logIn() {
